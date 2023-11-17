@@ -1,0 +1,58 @@
+import pandas as pd			# Import Library Pandas
+import numpy as np			# Import Library Numpy
+path='../Challange1/menu.csv'		#path file tempat dataset berada
+df = pd.read_csv(path)			#copy dataset ke dataframe
+df.head()				#menampilkan 5 data awal 
+#Data Set termuat dengan baik
+%%capture
+! pip install seaborn				# Install Seaborn
+import matplotlib.pyplot as plt		# Import Library Matplotlib
+import seaborn as sns				# Import Library Seaborn
+%matplotlib inline	
+print(df.dtypes)				# List tipe data setiap kolom
+df.corr()			# Mengetahui seberapa erat korelasi atau hubungan 
+			antar data
+df.describe()			# Mencari standard deviasi, rata-rata , 
+			nilai minimum, maksimum, 25%,50%,75%
+df.info()			# untuk mengecek tipe data sekaligus null pada data
+measures = ['Calories', 'Total Fat', 'Cholesterol','Sodium', 'Sugars', 'Carbohydrates','Protein']  #kolom yang akan diplot
+for m in measures:   
+    plot = sns.swarmplot(x="Category", y=m, data=df)  # Swarmplot (Melihat persebaran data)
+    plt.setp(plot.get_xticklabels(), rotation=45)
+    plt.title(m)
+    plt.show()
+print('Highest Calorie meal: {} \n\
+       Highest Fat meal: {} \n\
+       Highest Cholesterol meal: {} \n\
+       Highest Sodium meal: {} \n\
+       Highest Sugar meal: {} \n\
+       Highest Carb meal: {}'.format(df.Item[df['Calories'].idxmax()],\	#Item dengan Kalori tertinggi
+                                     df.Item[df['Total Fat'].idxmax()],\		#Item dengan Lemak Tertinggi
+                                     df.Item[df['Cholesterol'].idxmax()],\	#Item dengan Kolesterol Tertinggi
+                                     df.Item[df['Sodium'].idxmax()],\			#Item dengan Sodium Tertinggi
+                                     df.Item[df['Sugars'].idxmax()],\			#Item dengan Gula Tertinggi
+                                     df.Item[df['Carbohydrates'].idxmax()]))		#Item dengan Karbo Tertinggi
+# assert_is_not_none(df)
+df.columns=df.columns.str.replace(")","")	#fungsi untuk mereplace suatu karakter
+df.columns=df.columns.str.replace(" ","")
+df.columns=df.columns.str.replace("(","_")
+df.columns=df.columns.str.lower()
+cols_to_keep=["category","item","calories","totalfat","carbohydrates","protein"] 	#kolom yang disasar
+df=df[cols_to_keep]
+df=df.rename(columns={"totalfat":"fat_g",		#fungsi untuk mengganti nama
+                                            "item":"product_name",
+                                           "carbohydrates":"carbohydrates_g",
+                                           "protein":"proteins_g"
+                                           })
+#program di atas untuk menghapus atau keep suatu kolom
+
+df.carbohydrates_g=df.carbohydrates_g.astype(float)
+df.proteins_g=df.proteins_g.astype(float)
+df.fat_g=df.fat_g.astype(float)
+df.calories=df.calories.astype(float)
+#program di atas untuk mengganti type data sebelumnya int menjadi float
+
+sns.regplot(x="Calories", y="Total Fat", data=df) 	#memanggil regplot untuk kalori dan lemak 
+plt.ylim(0,)						#menampilkan
+
+#Dengan regplot dapat dilihat korelasi antara kalori dan lemak memiliki persebaran data yang mirip atau berdekatan yang berarti memiliki hubungan yang cukup erat antara keduanya.
